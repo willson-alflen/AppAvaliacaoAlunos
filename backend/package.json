@@ -2,8 +2,10 @@
   "name": "backend",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "cross-env NODE_OPTIONS=--openssl-legacy-provider node server.js",
+    "test-sheets": "cross-env NODE_OPTIONS=--openssl-legacy-provider node index.js"
   },
   "keywords": [],
   "author": "",
@@ -11,7 +13,11 @@
   "description": "",
   "dependencies": {
     "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "googleapis": "^154.1.0"
+  },
+  "devDependencies": {
+    "cross-env": "^10.0.0"
   }
 }
