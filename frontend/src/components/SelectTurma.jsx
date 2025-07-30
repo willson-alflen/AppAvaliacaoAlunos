@@ -1,41 +1,37 @@
 import { useEffect, useState } from 'react'
 import LoadingSpinner from './LoadingSpinner'
 
-export default function SelectTurma({ onChange }) {
+export default function SelectTurma({ onTurmaChange, value }) {
   const [turmas, setTurmas] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
+    setLoading(true)
     fetch('http://localhost:4000/turmas')
-      .then((res) => {
-        if (!res.ok) throw new Error('Erro na resposta do servidor')
-        return res.json()
-      })
-      .then((data) => {
-        setTurmas(data)
-        setLoading(false)
-      })
-      .catch(() => {
-        setError('Erro ao carregar turmas')
-        setLoading(false)
-      })
+      .then((res) => res.json())
+      .then((data) => setTurmas(data))
+      .catch((err) => console.error('Erro ao buscar turmas:', err))
+      .finally(() => setLoading(false))
   }, [])
 
-  if (loading) return <LoadingSpinner />
-  if (error) return <p className="text-red-500">{error}</p>
-
   return (
-    <select
-      className="w-full p-2 border rounded-md"
-      onChange={(e) => onChange(e.target.value)}
-    >
-      <option value="">Selecione</option>
-      {turmas.map((turma, i) => (
-        <option key={i} value={turma}>
-          {turma}
-        </option>
-      ))}
-    </select>
+    <>
+      {loading ? (
+        <LoadingSpinner />
+      ) : (
+        <select
+          className="p-2 border rounded w-full"
+          value={value}
+          onChange={(e) => onTurmaChange(e.target.value)}
+        >
+          <option value="">Selecione uma turma</option>
+          {turmas.map((turma, idx) => (
+            <option key={idx} value={turma}>
+              {turma}
+            </option>
+          ))}
+        </select>
+      )}
+    </>
   )
 }

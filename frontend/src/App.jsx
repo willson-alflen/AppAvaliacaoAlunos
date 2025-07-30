@@ -1,14 +1,10 @@
 import AvaliacaoForm from './components/AvaliacaoForm'
 import './App.css'
 
-function App() {
+export default function App() {
   return (
-    <>
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-        <AvaliacaoForm />
-      </div>
-    </>
+    <div className="min-h-screen bg-gray-100 flex justify-center items-center p-6">
+      <AvaliacaoForm />
+    </div>
   )
 }
-
-export default App
