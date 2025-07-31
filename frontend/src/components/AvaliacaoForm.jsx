@@ -3,6 +3,7 @@ import SelectTurma from './SelectTurma'
 import SelectAluno from './SelectAluno'
 import DimensaoAvaliacao from './DimensaoAvaliacao'
 import LoadingSpinner from './LoadingSpinner'
+import BotaoGerarPDF from './BotaoGerarPDF'
 
 const DIMENSOES = [
   {
@@ -76,19 +77,13 @@ export default function AvaliacaoForm() {
     }
   }
 
-  // 🔄 Limpa mensagem automaticamente após 3 segundos
+  // Limpa mensagem de sucesso automaticamente após 3 segundos
   useEffect(() => {
-    if (mensagem) {
+    if (mensagem.startsWith('✅')) {
       const timer = setTimeout(() => setMensagem(''), 3000)
       return () => clearTimeout(timer)
     }
   }, [mensagem])
-
-  // 🔄 Limpa mensagem se turma ou aluno mudar
-  useEffect(() => {
-    if (mensagem) setMensagem('')
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [turmaSelecionada, alunoSelecionado])
 
   // Validação para habilitar botão
   const podeEnviar =
@@ -101,6 +96,7 @@ export default function AvaliacaoForm() {
     >
       <h2 className="text-xl font-semibold mb-4">Ficha de Avaliação</h2>
 
+      {/* Seção de seleção */}
       <div>
         <label className="block mb-1 font-medium">Turma:</label>
         <SelectTurma
@@ -118,6 +114,7 @@ export default function AvaliacaoForm() {
         />
       </div>
 
+      {/* Dimensões de avaliação */}
       <div className="space-y-4">
         {DIMENSOES.map((dim, index) => (
           <DimensaoAvaliacao
@@ -130,6 +127,7 @@ export default function AvaliacaoForm() {
         ))}
       </div>
 
+      {/* Observações */}
       <div>
         <label className="block mb-1 font-medium">Observações:</label>
         <textarea
@@ -139,6 +137,7 @@ export default function AvaliacaoForm() {
         />
       </div>
 
+      {/* Botão enviar */}
       <button
         type="submit"
         disabled={!podeEnviar || loading}
@@ -151,7 +150,45 @@ export default function AvaliacaoForm() {
         {loading ? <LoadingSpinner /> : 'Enviar Avaliação'}
       </button>
 
-      {mensagem && <p className="text-center mt-2">{mensagem}</p>}
+      {mensagem && (
+        <div
+          className={`
+      relative text-center mt-2 bg-gray-50 border rounded-md px-4 py-2 shadow-sm 
+      transition-opacity duration-500 ease-in-out
+      ${mensagem ? 'opacity-100' : 'opacity-0'}
+    `}
+        >
+          <p
+            className={`${
+              mensagem.startsWith('✅') ? 'text-green-600' : 'text-red-600'
+            } font-medium`}
+          >
+            {mensagem}
+          </p>
+          {mensagem.startsWith('❌') && (
+            <button
+              onClick={() => setMensagem('')}
+              className="absolute top-1 right-2 text-gray-400 hover:text-red-600 text-lg font-bold"
+              aria-label="Fechar"
+            >
+              ×
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Seção de geração de relatórios */}
+      <div className="mt-8 border-t pt-6">
+        <h3 className="text-lg font-semibold mb-2">
+          📄 Relatórios de Avaliações
+        </h3>
+        <p className="text-gray-600 mb-4">
+          Gere relatórios individuais em PDF para todos os alunos da turma
+          selecionada. Você também pode filtrar por data para gerar apenas
+          avaliações de um dia específico.
+        </p>
+        <BotaoGerarPDF turmaSelecionada={turmaSelecionada} />
+      </div>
     </form>
   )
 }

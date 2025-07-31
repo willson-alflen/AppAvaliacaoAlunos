@@ -44,9 +44,14 @@ export async function salvarAvaliacao({
   avaliacoes, // [{ dimensao: '...', nota: 4 }, ...]
   observacoes,
 }) {
+  const hoje = new Date()
+  const dia = String(hoje.getDate()).padStart(2, '0')
+  const mes = String(hoje.getMonth() + 1).padStart(2, '0')
+  const ano = hoje.getFullYear()
+  const dataFormatada = `${dia}-${mes}-${ano}`
   const sheets = await authSheets()
 
-  // Converter as avaliações em colunas separadas (uma por dimensão)
+  // Converte as avaliações em colunas separadas (uma por dimensão)
   const avaliacoesNotas = avaliacoes.map((av) => av.nota)
 
   await sheets.spreadsheets.values.append({
@@ -60,9 +65,26 @@ export async function salvarAvaliacao({
           alunoSelecionado,
           ...avaliacoesNotas, // 5 colunas (uma por dimensão)
           observacoes,
-          new Date().toLocaleString(),
+          dataFormatada,
         ],
       ],
     },
   })
+}
+
+export async function getAvaliacoes() {
+  const sheets = await authSheets()
+  const response = await sheets.spreadsheets.values.get({
+    spreadsheetId: process.env.GOOGLE_SHEET_ID,
+    range: 'Avaliações!A2:I', // Colunas: A=Turma, B=Aluno, C-G=Notas (5 dimensões), H=Observações, I=Data
+  })
+
+  const rows = response.data.values || []
+  return rows.map((row) => ({
+    turma: row[0] || '',
+    aluno: row[1] || '',
+    avaliacoes: row.slice(2, 7).map((nota) => Number(nota) || 0), // colunas C a G (índices 2 a 6) são as 5 dimensões
+    observacoes: row[7] || '',
+    data: row[8] || '', // Data no formato "DD-MM-YYYY"
+  }))
 }
