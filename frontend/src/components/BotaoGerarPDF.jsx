@@ -6,6 +6,8 @@ export default function BotaoGerarPDF({ turmaSelecionada }) {
   const [loading, setLoading] = useState(false)
   const [mensagem, setMensagem] = useState('')
 
+  const API_URL = import.meta.env.VITE_API_URL
+
   useEffect(() => {
     const listaMeses = []
     const hoje = new Date()
@@ -34,7 +36,7 @@ export default function BotaoGerarPDF({ turmaSelecionada }) {
       setMensagem('')
 
       const response = await fetch(
-        `http://localhost:4000/relatorio/pdf/zip?turma=${turmaSelecionada}&mes=${mesSelecionado}`
+        `${API_URL}/relatorio/pdf/zip?turma=${turmaSelecionada}&mes=${mesSelecionado}`
       )
 
       if (response.status === 404) {

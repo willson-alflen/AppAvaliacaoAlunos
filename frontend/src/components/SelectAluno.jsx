@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import LoadingSpinner from './LoadingSpinner'
 
+const API_URL = import.meta.env.VITE_API_URL
+
 export default function SelectAluno({
   turmaSelecionada,
   onAlunoChange,
@@ -13,7 +15,7 @@ export default function SelectAluno({
     if (!turmaSelecionada) return
 
     setLoading(true)
-    fetch(`http://localhost:4000/alunos/${turmaSelecionada}`)
+    fetch(`${API_URL}/alunos/${turmaSelecionada}`)
       .then((res) => res.json())
       .then((data) => setAlunos(data))
       .catch((err) => console.error('Erro ao buscar alunos:', err))

@@ -43,6 +43,8 @@ export default function AvaliacaoForm() {
   const [mensagem, setMensagem] = useState('')
   const [loading, setLoading] = useState(false)
 
+  const API_URL = import.meta.env.VITE_API_URL
+
   const handleNotaChange = (index, nota) => {
     const novasAvaliacoes = [...avaliacoes]
     novasAvaliacoes[index].nota = nota
@@ -53,7 +55,7 @@ export default function AvaliacaoForm() {
     e.preventDefault()
     setLoading(true)
     try {
-      const response = await fetch('http://localhost:4000/avaliacao', {
+      const response = await fetch(`${API_URL}/avaliacao`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

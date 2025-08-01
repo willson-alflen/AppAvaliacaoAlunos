@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react'
 import LoadingSpinner from './LoadingSpinner'
 
+const API_URL = import.meta.env.VITE_API_URL
+
 export default function SelectTurma({ onTurmaChange, value }) {
   const [turmas, setTurmas] = useState([])
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     setLoading(true)
-    fetch('http://localhost:4000/turmas')
+    fetch(`${API_URL}/turmas`)
       .then((res) => res.json())
       .then((data) => setTurmas(data))
       .catch((err) => console.error('Erro ao buscar turmas:', err))

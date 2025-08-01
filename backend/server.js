@@ -14,7 +14,27 @@ import archiver from 'archiver'
 dotenv.config()
 const app = express()
 
-app.use(cors())
+const allowedOrigins = [
+  'https://app-avaliacao-alunos.vercel.app/',
+  'http://localhost:5173',
+]
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // permite requests sem origem (como curl/postman)
+      if (!origin) return callback(null, true)
+
+      if (allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true) // aceita a origem
+      } else {
+        callback(new Error('CORS policy: Origin não permitida'))
+      }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true, // se precisar de cookie/autenticação
+  })
+)
 app.use(express.json())
 
 // ---------------- FUNÇÃO GERAR PDF ----------------
