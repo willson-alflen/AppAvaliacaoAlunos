@@ -15,7 +15,7 @@ dotenv.config()
 const app = express()
 
 const allowedOrigins = [
-  'https://app-avaliacao-alunos.vercel.app/',
+  'https://app-avaliacao-alunos.vercel.app',
   'http://localhost:5173',
 ]
 
@@ -25,7 +25,8 @@ app.use(
       // permite requests sem origem (como curl/postman)
       if (!origin) return callback(null, true)
 
-      if (allowedOrigins.indexOf(origin) !== -1) {
+      // Permite se estiver na lista ou se for um domínio *.vercel.app
+      if (allowedOrigins.includes(origin) || /\.vercel\.app$/.test(origin)) {
         callback(null, true) // aceita a origem
       } else {
         callback(new Error('CORS policy: Origin não permitida'))
